@@ -1,6 +1,9 @@
 import fitz  # PyMuPDF
 import sys
 
+#run this command or something like it... 
+#python3 crop_and_resize_pdf.py "/home/morganiacolucci/Downloads/PDF to Slides.pdf" "/home/morganiacolucci/Downloads/resized_output_final.pdf"
+
 def crop_and_resize_pdf(input_pdf_path, output_pdf_path):
     # Standard US Letter size in points
     LETTER_WIDTH = 612  # 8.5 inches * 72
