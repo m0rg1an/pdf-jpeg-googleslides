@@ -10,7 +10,7 @@ function main() {
  */
 function mainAsync() {
   const fileId = 'Your_pdf_file_id';     // ← Insert your PDF file ID
-  const folderId = 'Your_folder_id';     // ← Insert your output folder ID
+  const folderId = 'Your_folder_id';    // ← Insert your output folder ID
 
   const blob = DriveApp.getFileById(fileId).getBlob();
   convertPDFToPNG_(blob, folderId);
@@ -41,7 +41,7 @@ function convertPDFToPNG_(blob, folderId) {
       const file = DriveApp.createFile(partBlob);
       tempFileIds.push(file.getId());
 
-      Utilities.sleep(3000); // Needed for thumbnail to generate
+      Utilities.sleep(3000); // Wait for thumbnail to be generated
 
       const thumbnail = Drive.Files.get(file.getId(), { fields: 'thumbnailLink' }).thumbnailLink;
       if (!thumbnail) throw new Error("Failed to get thumbnail. Try increasing sleep time.");
@@ -60,6 +60,10 @@ function convertPDFToPNG_(blob, folderId) {
 
     // Create Google Slides presentation
     const presentation = SlidesApp.create("PDF to Slides");
+    const presentationFile = DriveApp.getFileById(presentation.getId());
+    folder.addFile(presentationFile);
+    DriveApp.getRootFolder().removeFile(presentationFile);  // Optional: remove from root
+
     const slideWidth = presentation.getPageWidth();
     const slideHeight = presentation.getPageHeight();
 
