@@ -9,8 +9,8 @@ function main() {
  * Main async logic to convert PDF → PNG → Google Slides
  */
 function mainAsync() {
-  const fileId = 'Your_pdf_file_id';     // ← Insert your PDF file ID
-  const folderId = 'Your_folder_id';    // ← Insert your output folder ID
+  const fileId = 'file_id';     // ← Insert your PDF file ID
+  const folderId = 'folder_id';    // ← Insert your output folder ID
 
   const blob = DriveApp.getFileById(fileId).getBlob();
   convertPDFToPNG_(blob, folderId);
@@ -64,22 +64,20 @@ function convertPDFToPNG_(blob, folderId) {
     folder.addFile(presentationFile);
     DriveApp.getRootFolder().removeFile(presentationFile);  // Optional: remove from root
 
-    const slideWidth = presentation.getPageWidth();
-    const slideHeight = presentation.getPageHeight();
+    // Define letter size in points (8.5 x 11 inches = 612 x 792 pts)
+    const letterWidth = 612;
+    const letterHeight = 792;
 
     imageIds.forEach(id => {
       const blob = DriveApp.getFileById(id).getBlob();
       const slide = presentation.appendSlide(SlidesApp.PredefinedLayout.BLANK);
       const image = slide.insertImage(blob);
 
-      const imgWidth = image.getWidth();
-      const imgHeight = image.getHeight();
-      const scale = Math.min(slideWidth / imgWidth, slideHeight / imgHeight);
-
-      image.setWidth(imgWidth * scale);
-      image.setHeight(imgHeight * scale);
-      image.setLeft((slideWidth - image.getWidth()) / 2);
-      image.setTop((slideHeight - image.getHeight()) / 2);
+      // Resize image to fit letter size
+      image.setWidth(letterWidth);
+      image.setHeight(letterHeight);
+      image.setLeft((presentation.getPageWidth() - letterWidth) / 2);
+      image.setTop((presentation.getPageHeight() - letterHeight) / 2);
     });
 
     // Remove default empty slide
